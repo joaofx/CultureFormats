@@ -1,0 +1,119 @@
+﻿@using System.Globalization
+
+@model CultureInfo
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            Order of Culture priority:
+        </p>
+        
+        <ul>
+            <li>Thread Culture</li>
+            <li>
+                <ul>
+                    <li>Web.config Culture</li>
+                    <li>
+                        <ul>
+                            <li>Machine.config Culture</li>
+                            <li>
+                                <ul>
+                                    <li>Windows Config Panel</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Machine.config Culture</th>
+                    <th>Web.config Culture</th>
+                    <th>Show a Culture Info</th>
+                </tr>
+            </thead>
+            @ShowTableBody(CultureInfo.InstalledUICulture, CultureInfo.CurrentCulture, Model)
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            <b>DateTime.Now.ToShortDateString():</b> <span class="highlight">@DateTime.Now.ToShortDateString()</span>
+        </p>
+
+        <p>
+            <b>DateTime.Now.ToLongDateString():</b> @DateTime.Now.ToLongDateString()
+        </p>
+    </div>
+</div>
+
+@helper ShowTableBody(CultureInfo machine, CultureInfo webConfig, CultureInfo thread)
+{
+    <tbody>
+        <tr>
+            <th scope="row">Name</th>
+            <td>@machine.Name</td>
+            <td>@webConfig.Name</td>
+            <td>
+                @Html.DropDownList("Culture", new SelectList(CultureInfo.GetCultures(CultureTypes.AllCultures), "Name", "Name", Model.Name))
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">Display Name</th>
+            <td>@machine.DisplayName</td>
+            <td>@webConfig.DisplayName</td>
+            <td>@thread.DisplayName</td>
+        </tr>
+        <tr>
+            <th scope="row">Today Short</th>
+            <td>@DateTime.Now.ToString(machine.DateTimeFormat.ShortDatePattern)</td>
+            <td>@DateTime.Now.ToString(webConfig.DateTimeFormat.ShortDatePattern)</td>
+            <td>@DateTime.Now.ToString(thread.DateTimeFormat.ShortDatePattern)</td>
+        </tr>
+        <tr>
+            <th scope="row">Today Long</th>
+            <td>@DateTime.Now.ToString(machine.DateTimeFormat.LongDatePattern)</td>
+            <td>@DateTime.Now.ToString(webConfig.DateTimeFormat.LongDatePattern)</td>
+            <td>@DateTime.Now.ToString(thread.DateTimeFormat.LongDatePattern)</td>
+        </tr>
+        <tr>
+            <th scope="row">Short Format</th>
+            <td>@machine.DateTimeFormat.ShortDatePattern</td>
+            <td>@webConfig.DateTimeFormat.ShortDatePattern</td>
+            <td>@thread.DateTimeFormat.ShortDatePattern</td>
+        </tr>
+        <tr>
+            <th scope="row">Long Format</th>
+            <td>@machine.DateTimeFormat.LongDatePattern</td>
+            <td>@webConfig.DateTimeFormat.LongDatePattern</td>
+            <td>@thread.DateTimeFormat.LongDatePattern</td>
+        </tr>
+    </tbody>
+}
+
+@section scripts {
+    <script type="text/javascript">
+
+        $("#Culture").change(function () {
+            window.location = "@Url.Action("Index")?culture=" + $(this).val();
+        });
+
+    </script>
+}
